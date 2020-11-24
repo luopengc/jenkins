@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         id="WebApp_ID" version="3.0">
+
+    <!-- 解决乱码问题 -->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>
+            org.springframework.web.filter.CharacterEncodingFilter
+        </filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!-- springMVC配置。。。。。。。 开始-->
+    <servlet>
+        <servlet-name>springmvc</servlet-name><!-- 名字随便写 -->
+        <!-- springMVC的分发器 -->
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet
+        </servlet-class>
+        <!-- 规定这样写初始化加载 -->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:springmvc.xml</param-value>
+        </init-param>
+        <multipart-config>
+            <max-file-size>52428800</max-file-size>
+            <max-request-size>52428800</max-request-size>
+            <file-size-threshold>0</file-size-threshold>
+        </multipart-config>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>springmvc</servlet-name><!-- 和上面的servlet-name对应 -->
+        <url-pattern>/</url-pattern><!-- /表示拦截所有请求,或者*.do 表示拦截后缀.do结尾的请求 注意：这里不能用/* -->
+    </servlet-mapping>
+    <!-- springMVC配置。。。。。。。 结束-->
+
+
+
+    <!-- spring配置，，，，，，，，，开始 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:spring.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <!-- spring配置，，，，，，，，， 结束 -->
+
+
+
+
+    <!-- 修改图片配置                    开始-->
+    <filter>
+        <filter-name>MultipartFilter</filter-name>
+        <filter-class>org.springframework.web.multipart.support.MultipartFilter
+        </filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>MultipartFilter</filter-name>
+        <servlet-name>springmvc</servlet-name>
+    </filter-mapping>
+
+
+
+
+    <filter>
+        <filter-name>HiddenHttpMethodFilter</filter-name>
+        <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter
+        </filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>HiddenHttpMethodFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <!-- 修改图片配置                    结束-->
+
+
+    <!--            开始               -->
+    <!-- HiddenHttpMethodFilter是spring3.0之后新增的一个过滤器,可以将post请求转为put和delete请求,
+        对实现rest风格有了更好的支持 -->
+    <filter>
+        <filter-name>httpPutFormContentFilter</filter-name>
+        <filter-class>org.springframework.web.filter.HttpPutFormContentFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>httpPutFormContentFilter</filter-name>
+        <!-- 拦截所有 -->
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <!--            结束               -->
+</web-app>
+

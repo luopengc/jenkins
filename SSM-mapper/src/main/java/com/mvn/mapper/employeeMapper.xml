@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mvn.mapper.EmployeeMapper">
+    <resultMap type="com.mvn.entity.Employee" id="employeeResult">
+        <id property="id" column="id" />
+        <result property="lastName" column="lastName" />
+        <result property="headPath" column="headPath" />
+        <result property="email" column="email" />
+        <result property="gender" column="gender" />
+        <result property="birth" column="birth" />
+
+        <association property="department" javaType="Department">
+            <id property="id" column="id"/>
+            <result property="dpname" column="dpname"/>
+        </association>
+    </resultMap>
+
+
+    <!-- 回显专用 -->
+    <resultMap type="com.mvn.entity.Employee" id="updateid">
+        <id property="id" column="id" />
+        <result property="lastName" column="lastName" />
+        <result property="headPath" column="headPath" />
+        <result property="email" column="email" />
+        <result property="gender" column="gender" />
+        <result property="birth" column="birth" />
+
+        <association property="department" javaType="Department">
+            <id property="id" column="dep_Id"/>
+            <result property="dpname" column="dpname"/>
+        </association>
+    </resultMap>
+
+    <!-- 查询部门所有信息 -->
+    <select id="queryAlld" resultMap="deptResult">
+		SELECT * from departments;
+	</select>
+
+    <!-- 部门二级联动专用 -->
+    <resultMap type="Department" id="deptResult">
+        <id property="id" column="id"/>
+        <result property="dpname" column="dpname"/>
+    </resultMap>
+
+    <!-- 查询部门跟员工所有信息 -->
+    <select id="queryAll" resultMap="employeeResult">
+		SELECT * from employees a LEFT JOIN departments b on a.dep_Id =b.id;
+	</select>
+
+    <!-- 添加 -->
+    <insert id="addEmpy" parameterType="Employee" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		employees(headPath,lastName,email,gender,birth,dep_Id)values(#{headPath},#{lastName},#{email},#{gender},#{birth},#{department.id})
+	</insert>
+
+    <!-- 删除 -->
+    <delete id="delEmpy" parameterType="int">
+        delete from employees
+        <where>
+            id = #{id}
+        </where>
+    </delete>
+
+    <!-- 根据id查询回显数据 -->
+    <select id="getEmpyId" parameterType="int" resultMap="updateid">
+	select * from employees e ,departments d where e.dep_Id=d.id and e.id=#{id}
+	</select>
+
+    <!-- 修改 -->
+    <update id="updateEmpy" parameterType="Department">
+		update employees set lastName=#{lastName},headPath=#{headPath},email=#{email},gender=#{gender},birth=#{birth},dep_Id=#{department.id} where id =#{id}
+	</update>
+
+</mapper>
